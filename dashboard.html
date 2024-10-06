@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard de Resultados</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    button {
+      padding: 8px 12px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Resultados em Tempo Real</h1>
+
+  <div id="dashboard"></div>
+
+  <script>
+    const Dashboard = () => {
+      const [candidates, setCandidates] = useState([]);
+      const [totalVotes, setTotalVotes] = useState(0);
+      const [loading, setLoading] = useState(true);
+
+      useEffect(() => {
+        const fetchCandidates = async () => {
+          try {
+            setLoading(true);
+            const response = await axios.get('/api/candidates');
+            setCandidates(response.data);
+            calculateTotalVotes(response.data);
+          } catch (error) {
+            console.error('Erro ao buscar candidatos:', error);
+          } finally {
+            setLoading(false);
+          }
+        };
+
+        fetchCandidates();
+      }, []);
+
+      const calculateTotalVotes = (candidates) => {
+        const total = candidates.reduce((acc, candidate) => acc + candidate.votes, 0);
+        setTotalVotes(total);
+      };
+
+      const handleVerifyProof = async (candidateId) => {
+        try {
+          const response = await axios.post(`/api/verify/${candidateId}`);
+          if (response.data.success) {
+            alert('Prova verificada com sucesso!');
+          } else {
+            alert('Falha na verificação da prova.');
+          }
+        } catch (error) {
+          console.error('Erro ao verificar prova:', error);
+        }
+      };
+
+      return (
+        <div>
+          {loading ? (
+            <p>Carregando...</p>
+          ) : (
+            <table>
+              <thead>
+                <tr>
+                  <th>Candidato</th>
+                  <th>Votos</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {candidates.map((candidate) => (
+                  <tr key={candidate.id}>
+                    <td>{candidate.name}</td>
+                    <td>{candidate.votes}</td>
+                    <td>
+                      <button onClick={() => handleVerifyProof(candidate.id)}>Verificar Prova</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+          <div>Total de Votos: {totalVotes}</div>
+        </div>
+      );
+    };
+
+    export default Dashboard;
+  </script>
+
+</body>
+</html>

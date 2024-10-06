@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Votação</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .hidden {
+      display: none;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    select, button {
+      padding: 8px;
+      width: 100%;
+    }
+    .confirmation {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Eleição por Voto Transferível Único (STV)</h1>
+
+  <form id="votingForm">
+    <div class="form-group">
+      <label for="firstChoice">Primeira escolha:</label>
+      <select id="firstChoice" required>
+        <option value="" disabled selected>Selecione o primeiro candidato</option>
+        <!-- Opções serão preenchidas dinamicamente -->
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="secondChoice">Segunda escolha:</label>
+      <select id="secondChoice">
+        <option value="" disabled selected>Selecione o segundo candidato</option>
+        <!-- Opções serão preenchidas dinamicamente -->
+      </select>
+    </div>
+
+    <button type="submit">Confirmar Voto</button>
+  </form>
+
+  <div id="confirmationScreen" class="hidden">
+    <h2>Confirmação de Voto</h2>
+    <p>Primeira escolha: <span id="confirmationFirstChoice"></span></p>
+    <p>Segunda escolha: <span id="confirmationSecondChoice"></span></p>
+    <button id="confirmVote">Confirmar</button>
+    <button id="correctVote">Corrigir</button>
+  </div>
+
+  <div id="summaryScreen" class="hidden">
+    <h2>Voto Registrado</h2>
+    <p id="summaryChoices"></p>
+    <button id="finalConfirm">Finalizar</button>
+  </div>
+
+  <script>
+    const votingForm = document.getElementById('votingForm');
+    const confirmationScreen = document.getElementById('confirmationScreen');
+    const summaryScreen = document.getElementById('summaryScreen');
+    const confirmationFirstChoice = document.getElementById('confirmationFirstChoice');
+    const confirmationSecondChoice = document.getElementById('confirmationSecondChoice');
+    const summaryChoices = document.getElementById('summaryChoices');
+
+    let selectedFirstChoice = null;
+    let selectedSecondChoice = null;
+
+    function populateChoices() {
+      const firstChoiceSelect = document.getElementById('firstChoice');
+      const secondChoiceSelect = document.getElementById('secondChoice');
+      const candidates = [
+        { id: 1, name: 'Candidato A' },
+        { id: 2, name: 'Candidato B' },
+        { id: 3, name: 'Candidato C' },
+      ];
+
+      candidates.forEach(candidate => {
+        const option1 = document.createElement('option');
+        option1.value = candidate.id;
+        option1.textContent = candidate.name;
+        firstChoiceSelect.appendChild(option1);
+
+        const option2 = document.createElement('option');
+        option2.value = candidate.id;
+        option2.textContent = candidate.name;
+        secondChoiceSelect.appendChild(option2);
+      });
+    }
+
+    votingForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      selectedFirstChoice = document.getElementById('firstChoice').value;
+      selectedSecondChoice = document.getElementById('secondChoice').value;
+
+      confirmationFirstChoice.textContent = selectedFirstChoice;
+      confirmationSecondChoice.textContent = selectedSecondChoice;
+
+      votingForm.classList.add('hidden');
+      confirmationScreen.classList.remove('hidden');
+    });
+
+    document.getElementById('confirmVote')?.addEventListener('click', () => {
+      summaryChoices.textContent = `Primeira escolha: ${selectedFirstChoice}, Segunda escolha: ${selectedSecondChoice}`;
+      confirmationScreen.classList.add('hidden');
+      summaryScreen.classList.remove('hidden');
+    });
+
+    document.getElementById('correctVote')?.addEventListener('click', () => {
+      confirmationScreen.classList.add('hidden');
+      votingForm.classList.remove('hidden');
+    });
+
+    document.getElementById('finalConfirm')?.addEventListener('click', () => {
+      alert('Voto confirmado!');
+      // Aqui seria processada a lógica do zk-STARK
+    });
+
+    populateChoices();
+  </script>
+
+</body>
+</html>

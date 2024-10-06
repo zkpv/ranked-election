@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Candidatos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    input, button {
+      padding: 8px;
+      width: 100%;
+    }
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Registro de Candidatos</h1>
+
+  <form id="candidateForm">
+    <div class="form-group">
+      <label for="candidateName">Nome do Candidato:</label>
+      <input type="text" id="candidateName" required>
+    </div>
+
+    <div class="form-group">
+      <label for="candidateAffiliation">Afiliação:</label>
+      <input type="text" id="candidateAffiliation" required>
+    </div>
+
+    <button type="submit">Registrar Candidato</button>
+  </form>
+
+  <h2>Candidatos Registrados</h2>
+  <table id="candidatesTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Afiliação</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Candidatos serão preenchidos dinamicamente -->
+    </tbody>
+  </table>
+
+  <script>
+    const candidateForm = document.getElementById('candidateForm');
+    const candidatesTableBody = document.querySelector('#candidatesTable tbody');
+
+    let candidates = [];
+    let candidateCount = 0;
+
+    candidateForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const candidateName = document.getElementById('candidateName').value;
+      const candidateAffiliation = document.getElementById('candidateAffiliation').value;
+
+      candidateCount += 1;
+      const candidate = {
+        id: candidateCount,
+        name: candidateName,
+        affiliation: candidateAffiliation
+      };
+
+      candidates.push(candidate);
+      updateCandidatesTable();
+      candidateForm.reset();
+    });
+
+    function updateCandidatesTable() {
+      candidatesTableBody.innerHTML = '';
+      candidates.forEach(candidate => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${candidate.id}</td>
+          <td>${candidate.name}</td>
+          <td>${candidate.affiliation}</td>
+        `;
+        candidatesTableBody.appendChild(row);
+      });
+    }
+  </script>
+
+</body>
+</html>
